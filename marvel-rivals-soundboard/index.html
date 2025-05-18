@@ -18,6 +18,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scrolling on the body */
         }
 
         /* Main heading style */
@@ -46,20 +47,21 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 20px;
-            width: 100%;
+            width: 100%; /* Ensure grid takes full width */
             max-width: 1000px;
             margin: 20px auto;
-            padding: 25px;
+            padding: 25px; /* Keep some padding, adjust in media query if needed */
             background-color: #2e473b; /* Medium dark green, like foliage */
             border-radius: 16px; /* Slightly more rounded */
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35); /* Deeper shadow */
             border: 1px solid #4caf50; /* Green border */
+            box-sizing: border-box; /* Include padding in the element's total width */
         }
 
         /* Styling for each sound button */
         .sound-button {
-            padding: 20px 12px; /* Adjusted padding */
-            font-size: 0.95em; /* Slightly smaller font size to help prevent clipping */
+            padding: 15px 10px; /* Adjusted padding for better text wrapping */
+            font-size: 0.95em;
             font-weight: bold;
             font-family: 'Roboto', sans-serif;
             color: #1b2720; /* Dark text for contrast on light buttons */
@@ -69,13 +71,14 @@
             cursor: pointer;
             transition: background-image 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
             box-shadow: 0 5px 8px rgba(0,0,0,0.25);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            /* Removed overflow, text-overflow, white-space to allow wrapping */
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 55px; /* Adjusted min-height */
+            text-align: center; /* Center text within the button */
+            min-height: 60px; /* Increased min-height to accommodate two lines */
+            word-break: break-word; /* Break long words */
+            line-height: 1.3; /* Slightly increased line height */
         }
 
         .sound-button:hover {
@@ -113,6 +116,9 @@
 
         /* Responsive adjustments for smaller screens */
         @media (max-width: 600px) {
+            body {
+                padding: 10px; /* Reduce body padding on small screens */
+            }
             h1 {
                 font-size: 2.2em;
             }
@@ -120,16 +126,36 @@
                 font-size: 1em;
             }
             .soundboard-grid {
-                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); /* Smaller min button width */
-                gap: 15px;
-                padding: 20px;
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Smaller min button width */
+                gap: 10px; /* Reduce gap */
+                padding: 15px; /* Reduce grid padding */
             }
             .sound-button {
-                font-size: 0.9em; /* Further adjust for smaller buttons */
-                padding: 18px 10px;
-                min-height: 50px;
+                font-size: 0.85em; /* Further adjust for smaller buttons */
+                padding: 12px 8px; /* Adjusted padding */
+                min-height: 55px; /* Adjusted min-height */
             }
         }
+
+        /* Style for the temporary message div */
+        .temp-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f44336; /* Default error color */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .temp-message.warning {
+            background-color: #ff9800; /* Warning color */
+        }
+
     </style>
 </head>
 <body>
@@ -151,32 +177,51 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- CONFIGURATION ---
-            // IMPORTANT: Add your MP3 filenames to this list.
-            // These files MUST be in the SAME DIRECTORY as this index.html file.
-            // Example sounds (replace with actual Mantis-themed or general game sounds)
+            // List of Mantis sound filenames (without the .mov extension)
+            // These files are assumed to be in a directory named "mantis"
             const soundFileNames = [
-                "I feel bad for you.mov",
-                "Step it up.mov",
-                "soothe.mp3",
-                "sleep-now.mp3",
-                "danger-sense.mp3",
-                "celestial-connection.mp3",
-                "plant-growth.mp3",
-                "insectoid-chatter.mp3",
-                "healing-aura.mp3",
-                "feel-my-emotions.mp3",
-                "guardians-assemble.mp3",
-                "yggdrasil-whisper.mp3",
-                "cosmic-awareness.mp3",
-                "ego-defeated.mp3",
-                "team-up-ready.mp3",
-                "victory-serene.mp3",
-                "power-surge.mp3",
-                "defensive-growth.mp3",
-                "calm-the-storm.mp3",
-                "this-ones-sad.mp3"
-                // Add more sound file names as needed
+                "Feeling bad",
+                "I feel bad for you",
+                "Did I hurt your feelings",
+                "Something unatural in you",
+                "Step it up",
+                "Chin up",
+                "Wait what",
+                "That's not polite",
+                "You've made me angry",
+                "My anger is healthy",
+                "This is natural anger",
+                "I sense sarcasm",
+                "That's a lie",
+                "Why do you lie",
+                "Take your lies elsewhere",
+                "Sometimes you can reason with people",
+                "We fight for world not glory",
+                "I feel vulnerable",
+                "Help please",
+                "Don't hold in your emotions",
+                "Such an emotional time",
+                "I feel your pain",
+                "Are you anxious",
+                "Take a nap",
+                "I think not",
+                "Yes",
+                "Ok understood",
+                "I am less angry now",
+                "Can I help",
+                "I will take risks",
+                "Mantis ready to strike",
+                "It pleases me to be helpful",
+                "We're on our way to victory",
+                "Oh hi",
+                "Friends gather around",
+                "Glad to help",
+                "Ah thank you",
+                "You're so kind",
+                // Add more base filenames as needed
             ];
+            const audioDirectory = "mantis/"; // Directory where sound files are located
+            const audioExtension = ".mov"; // The file extension for the sound files
             // --- END CONFIGURATION ---
 
             const soundboardGridElement = document.getElementById('soundboardGrid');
@@ -201,44 +246,72 @@
 
             const audioPlayers = {};
 
-            soundFileNames.forEach(filename => {
+            // Function to show temporary messages
+            function showMessage(message, type = 'error') {
+                const messageDiv = document.createElement('div');
+                messageDiv.textContent = message;
+                messageDiv.className = 'temp-message';
+                if (type === 'warning') {
+                    messageDiv.classList.add('warning');
+                }
+                document.body.appendChild(messageDiv);
+                setTimeout(() => {
+                    messageDiv.style.opacity = '0';
+                    messageDiv.addEventListener('transitionend', () => messageDiv.remove());
+                }, 4500); // Fade out after 4.5 seconds, remove after 5 seconds
+            }
+
+
+            soundFileNames.forEach(baseFilename => {
                 const button = document.createElement('button');
                 button.className = 'sound-button';
 
-                let buttonText = filename.substring(0, filename.lastIndexOf('.')) || filename;
-                buttonText = buttonText.replace(/[-_]/g, ' ');
+                // Use the base filename for the button text
+                let buttonText = baseFilename.replace(/[-_]/g, ' ');
                 buttonText = buttonText.replace(/\b\w/g, char => char.toUpperCase());
 
                 button.textContent = buttonText;
                 button.title = `Play: ${buttonText}`;
 
+                // Construct the full file path
+                const fullFilePath = audioDirectory + baseFilename + audioExtension;
+
                 const audio = document.createElement('audio');
-                const audioId = `audio-${filename.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                // Create a unique ID based on the full file path
+                const audioId = `audio-${fullFilePath.replace(/[^a-zA-Z0-9]/g, '-')}`;
                 audio.id = audioId;
-                audio.src = filename;
+                audio.src = fullFilePath; // Set the source to the full file path
                 audio.preload = 'auto';
 
-                audioPlayers[filename] = audio;
+                // Store the audio player using the full file path as the key
+                audioPlayers[fullFilePath] = audio;
                 audioElementsContainerElement.appendChild(audio);
 
                 button.addEventListener('click', () => {
-                    const soundToPlay = audioPlayers[filename];
+                    // Retrieve the sound player using the full file path
+                    const soundToPlay = audioPlayers[fullFilePath];
                     if (soundToPlay) {
-                        // Stop any other currently playing sounds
-                        Object.values(audioPlayers).forEach(player => {
-                            if (player !== soundToPlay && !player.paused) {
-                                player.pause();
-                                player.currentTime = 0;
-                            }
-                        });
-                        soundToPlay.currentTime = 0;
-                        soundToPlay.play().catch(error => {
-                            console.error(`Error playing sound "${filename}":`, error);
-                            alert(`Mantis cannot channel this sound: ${buttonText}. Check console.`);
-                        });
+                        if (!soundToPlay.paused) {
+                            // If the sound is already playing, stop it
+                            soundToPlay.pause();
+                            soundToPlay.currentTime = 0;
+                        } else {
+                            // If the sound is not playing, stop any others and play this one
+                            Object.values(audioPlayers).forEach(player => {
+                                if (player !== soundToPlay && !player.paused) {
+                                    player.pause();
+                                    player.currentTime = 0;
+                                }
+                            });
+                            soundToPlay.currentTime = 0;
+                            soundToPlay.play().catch(error => {
+                                console.error(`Error playing sound "${fullFilePath}":`, error);
+                                showMessage(`Mantis cannot channel this sound: ${buttonText}. Check console.`, 'error');
+                            });
+                        }
                     } else {
-                        console.error(`Audio element for "${filename}" not found.`);
-                        alert(`The empathic link to "${buttonText}" is broken. Check configuration.`);
+                        console.error(`Audio element for "${fullFilePath}" not found.`);
+                        showMessage(`The empathic link to "${buttonText}" is broken. Check configuration.`, 'warning');
                     }
                 });
                 soundboardGridElement.appendChild(button);
