@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marvel Rivals - Mantis Soundboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Basic body styling */
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a2a22; /* Darker, earthy green */
+            color: #e8f5e9; /* Light green text, like new leaves */
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Main heading style */
+        h1 {
+            font-family: 'Orbitron', sans-serif; /* A more futuristic/game-like font */
+            color: #a5d6a7; /* Lighter green, like Mantis's skin highlights */
+            margin-bottom: 10px;
+            font-size: 2.8em;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+            letter-spacing: 1px;
+        }
+
+        .character-info {
+            font-family: 'Roboto', sans-serif;
+            color: #c8e6c9; /* Soft green */
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .character-info strong {
+            color: #fff59d; /* Pale yellow, like her antennae tips */
+        }
+
+        /* Styling for the grid container */
+        .soundboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 25px;
+            background-color: #2e473b; /* Medium dark green, like foliage */
+            border-radius: 16px; /* Slightly more rounded */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35); /* Deeper shadow */
+            border: 1px solid #4caf50; /* Green border */
+        }
+
+        /* Styling for each sound button */
+        .sound-button {
+            padding: 20px 12px; /* Adjusted padding */
+            font-size: 0.95em; /* Slightly smaller font size to help prevent clipping */
+            font-weight: bold;
+            font-family: 'Roboto', sans-serif;
+            color: #1b2720; /* Dark text for contrast on light buttons */
+            background-image: linear-gradient(to bottom, #fff59d, #fbc02d); /* Yellow gradient - Mantis's antennae/accents */
+            border: none;
+            border-radius: 10px; /* More rounded */
+            cursor: pointer;
+            transition: background-image 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 5px 8px rgba(0,0,0,0.25);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 55px; /* Adjusted min-height */
+        }
+
+        .sound-button:hover {
+            background-image: linear-gradient(to bottom, #fce680, #f9a825); /* Slightly darker yellow */
+            box-shadow: 0 7px 14px rgba(0,0,0,0.3);
+        }
+
+        .sound-button:active {
+            background-image: linear-gradient(to bottom, #f9a825, #f57f17); /* Even darker yellow/orange */
+            transform: scale(0.96);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+
+        /* Accessibility: focus style */
+        .sound-button:focus {
+            outline: 3px solid #81c784; /* Bright green focus outline */
+            outline-offset: 3px;
+        }
+
+        /* Container for audio elements, hidden from view */
+        .audio-controls {
+            display: none;
+        }
+
+        /* Footer styling */
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 0.9em;
+            color: #a5d6a7; /* Light green for footer text */
+        }
+        footer p {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.2em;
+            }
+            .character-info {
+                font-size: 1em;
+            }
+            .soundboard-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); /* Smaller min button width */
+                gap: 15px;
+                padding: 20px;
+            }
+            .sound-button {
+                font-size: 0.9em; /* Further adjust for smaller buttons */
+                padding: 18px 10px;
+                min-height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>MARVEL RIVALS</h1>
+    <div class="character-info">Soundboard Edition: <strong>MANTIS</strong></div>
+
+    <div id="soundboardGrid" class="soundboard-grid">
+        <p id="loadingMessage" style="color: #e8f5e9;">Loading Mantis's Empathic Sounds...</p>
+    </div>
+
+    <div id="audioElementsContainer" class="audio-controls">
+        </div>
+
+    <footer>
+        <p>&copy; 2025 Marvel Rivals - Mantis Fan Soundboard. Feel the vibes!</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- CONFIGURATION ---
+            // IMPORTANT: Add your MP3 filenames to this list.
+            // These files MUST be in the SAME DIRECTORY as this index.html file.
+            // Example sounds (replace with actual Mantis-themed or general game sounds)
+            const soundFileNames = [
+                "I feel bad for you.mov",
+                "Step it up.mov",
+                "soothe.mp3",
+                "sleep-now.mp3",
+                "danger-sense.mp3",
+                "celestial-connection.mp3",
+                "plant-growth.mp3",
+                "insectoid-chatter.mp3",
+                "healing-aura.mp3",
+                "feel-my-emotions.mp3",
+                "guardians-assemble.mp3",
+                "yggdrasil-whisper.mp3",
+                "cosmic-awareness.mp3",
+                "ego-defeated.mp3",
+                "team-up-ready.mp3",
+                "victory-serene.mp3",
+                "power-surge.mp3",
+                "defensive-growth.mp3",
+                "calm-the-storm.mp3",
+                "this-ones-sad.mp3"
+                // Add more sound file names as needed
+            ];
+            // --- END CONFIGURATION ---
+
+            const soundboardGridElement = document.getElementById('soundboardGrid');
+            const audioElementsContainerElement = document.getElementById('audioElementsContainer');
+            const loadingMessageElement = document.getElementById('loadingMessage');
+
+            if (!soundboardGridElement || !audioElementsContainerElement || !loadingMessageElement) {
+                console.error("Initialization failed: Essential HTML elements are missing.");
+                if(loadingMessageElement) loadingMessageElement.textContent = "Error: Could not initialize Mantis soundboard.";
+                return;
+            }
+
+            loadingMessageElement.style.display = 'none';
+
+            if (soundFileNames.length === 0) {
+                const noSoundsMessage = document.createElement('p');
+                noSoundsMessage.textContent = "No sound files configured. Please add Mantis-themed sound filenames to the 'soundFileNames' array in the script.";
+                noSoundsMessage.style.color = "#e8f5e9"; // Match body text color
+                soundboardGridElement.appendChild(noSoundsMessage);
+                return;
+            }
+
+            const audioPlayers = {};
+
+            soundFileNames.forEach(filename => {
+                const button = document.createElement('button');
+                button.className = 'sound-button';
+
+                let buttonText = filename.substring(0, filename.lastIndexOf('.')) || filename;
+                buttonText = buttonText.replace(/[-_]/g, ' ');
+                buttonText = buttonText.replace(/\b\w/g, char => char.toUpperCase());
+
+                button.textContent = buttonText;
+                button.title = `Play: ${buttonText}`;
+
+                const audio = document.createElement('audio');
+                const audioId = `audio-${filename.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                audio.id = audioId;
+                audio.src = filename;
+                audio.preload = 'auto';
+
+                audioPlayers[filename] = audio;
+                audioElementsContainerElement.appendChild(audio);
+
+                button.addEventListener('click', () => {
+                    const soundToPlay = audioPlayers[filename];
+                    if (soundToPlay) {
+                        // Stop any other currently playing sounds
+                        Object.values(audioPlayers).forEach(player => {
+                            if (player !== soundToPlay && !player.paused) {
+                                player.pause();
+                                player.currentTime = 0;
+                            }
+                        });
+                        soundToPlay.currentTime = 0;
+                        soundToPlay.play().catch(error => {
+                            console.error(`Error playing sound "${filename}":`, error);
+                            alert(`Mantis cannot channel this sound: ${buttonText}. Check console.`);
+                        });
+                    } else {
+                        console.error(`Audio element for "${filename}" not found.`);
+                        alert(`The empathic link to "${buttonText}" is broken. Check configuration.`);
+                    }
+                });
+                soundboardGridElement.appendChild(button);
+            });
+        });
+    </script>
+
+</body>
+</html>
